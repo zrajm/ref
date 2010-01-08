@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+          "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+<head>
+  <title>Zrajm: tmux: A Beginner's Guide</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta name="geo.region" content="SE-C" />
+  <meta name="geo.placename" content="Europe, Sweden, Uppsala, K&aring;bo" />
+  <meta name="geo.position" content="59.845658;17.630797" />
+  <link type="image/png" rel="icon" href="/pic/favicon.png" />
+  <style type="text/css"><!--
+    pre { margin-left: 3em; }
+    a { font-style: italic; }
+  --></style>
+</head>
+<body>
+
+<h1><tt>tmux</tt>: A Beginner's Guide</h1>
+
+<p>I'm not quite convinced of <tt>tmux</tt>'s superiority yet.&mdash;I mean, I've been
+using it for a while now (couple of months maybe) and it's working quite fine, bu</p>
+
+<h2>List Windows in a Session</h2>
+
+<p>To list the windows in a session, use the "list-windows" <tt>tmux</tt>
+commands. E.g. to list the windows in a session named "chat" use:</p>
+
+<pre>
+$ tmux list-windows -t chat
+0: zsh [239x69]
+1: man tmux [239x69]
+2: emacs [239x69]
+3: zsh [239x69]
+</pre>
+
+<p>And, of course, if you don't specify a target session which to list, you get
+a list of the windows in the current session.</p>
+
+
+<h2>Grab a Window from Another Session</h2>
+
+<p>Grabbing the window "emacs" from the "chat" session and move it into the
+current session.</p>
+
+<pre>
+$ tmux move-window -s chat:emacs
+</pre>
+
+<p>You can also use "link-window", instead of "move-window", to attach the
+window to the current session without removing it from the old one (thereby
+causing the same window to appear in both sessions).</p>
+
+<h2>What I Don't Like About <tt>tmux</tt></h2>
+
+<p><em>a)</em> There is no way to get the name of the current session. I.e. if I
+just want to know the name of the session I'm in (the environment variable $STY
+in screen) I'm outta luck.</p>
+
+<p>Okay, I admit, screen handles renaming of sessions very poorly ($STY only the
+new session name in new windows, and old windows cannot "talk" to the screen
+daemon they're running under unless one manually sets $STY to the new session
+name)&mdash;but not being able to figure out which session I'm running under
+from the command line, without listing the window contents of all running
+sessions and comparing it to the list of windows in the current session seem a
+bit cumbersome to me.</p>
+
+<p><em>b)</em> If I upgrade <tt>tmux</tt> on my machine I loose contact with all
+my <tt>tmux</tt> windows/sessions. :( <tt>irssi</tt> handles the exact same
+scenario marvellously&mdash;after doing an upgrade of <tt>irssi</tt> on my
+machine I can just run <tt>/upgrade</tt> and then I'm running under the new
+version, with all my connections and buffers and scrollbacks all intact.</p>
+
+
+<h2>References</h2>
+
+<ul>
+<li><a href="http://tmux.sourceforge.net/">tmux on Sourceforge</a></li>
+</ul>
+
+
+<hr /><p>By <span class="author"><a href="mail:zrajm@klingonska.org">Zrajm C
+Akfohg</a></span> in Uppsala [2010-01-08]
+
+<small>(Validate: <a href="http://validator.w3.org/check?uri=referer">XHTML</a>,
+  <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>,
+  <a href="http://validator.w3.org/checklink?uri=http://zrajm.org/ref/ontoleptic.html">links</a>
+  License:
+  <a href="http://creativecommons.org/licenses/by-sa/3.0/" rel="license">CC BY&ndash;SA</a>)</small>
+</p>
+
+</body>
+</html>
