@@ -1,0 +1,101 @@
+<!doctype html>
+<html lang=en>
+<head>
+  <title>Zrajm: Merging One Git Repo into Another</title>
+  <meta charset="utf-8">
+  <link type="image/png" rel=icon href="/pic/favicon.png" />
+  <style type="text/css"><!--
+    pre { margin-left: 3em; }
+    a { font-style: italic; }
+  --></style>
+</head>
+<body>
+
+
+<h1>Merging One Git Repo into Another</h1>
+
+<p>After working with two separate git reposes for a while, I realized that
+they actually belonged together, and that the contents of one of the reposes
+actually should just reside in a subdirectory in the other one. After asking
+around, and experimenting quite a bit I figured out how to do this, and so I
+write this as a reminder, should I ever have to do this again. (Needless to
+say, if you intend to follow these instructions, make backups of your
+reposes.)</p>
+
+
+<h2>Fetch the repo to be included</h2>
+
+<p>First we need to get the data from the repo we&rsquo;re about to include.
+We&rsquo;ll put it into a separate branch (imaginativelly called
+&ldquo;newbranch&rdquo; here) of our main repo.</p>
+
+<pre>
+git fetch /path/to/repo/to/include master:newbranch
+</pre>
+
+
+<h2>Move fetched stuff into its own subdir</h2>
+
+<p>Now, if we wanted, we could simply checkout this new branch, move all files
+in it into a subdirectory using <code>git mv</code> and thereafter do a
+merge&mdash;but then we&rsquo;d loose all the log history of those files
+(actually, it&rsquo;d still be there, but <code>git log FILENAME</code>
+wouldn&rsquo;t give it to us since it doesn&rsquo;t follow file name changes).
+So, to avoid this, let&rsquo;s do a little bit of history re-engineering on
+this &ldquo;newbranch&rdquo;.</p>
+
+<p>This magic isn&rsquo;t mine, but actually comes from <code>git help
+filter-branch</code> (search for &ldquo;move the whole tree into a
+subdirectory&rdquo;&mdash;it&rsquo;s at the very end of the page).
+This&rsquo;ll move all contents into the newly fetched &ldquo;newbranch&rdquo;
+into a single subdirectory called &ldquo;old&rdquo;.</p>
+
+<pre>
+SUBDIR_NAME=old
+BRANCH_NAME=newbranch
+git filter-branch --index-filter \
+    'git ls-files -s | \
+        sed "s-\t-&amp;'"$SUBDIR_NAME"'/-" | \
+        GIT_INDEX_FILE=$GIT_INDEX_FILE.new git update-index --index-info &amp;&amp; \
+        mv $GIT_INDEX_FILE.new $GIT_INDEX_FILE
+    ' "$BRANCH_NAME"
+</pre>
+
+<p>(If the above results in a &ldquo;Cannot rewrite branch(es) with a dirty
+working directory.&rdquo; error, then make sure your working directory is
+clean&mdash;i.e. that <code>git status</code> reports &ldquo;nothing to
+commit&rdquo;.)</p>
+
+
+<h2>Merge fetched stuff into main branch</h2>
+
+<p>Now we only need to merge &ldquo;newbranch&rdquo; into our main branch and
+remove it as a separate branch from our repository. Like so:</p>
+
+<pre>
+git merge newbranch
+git branch -d newbranch   # optional, removes newbranch
+</pre>
+
+
+<h1>Thanxes</h1>
+
+<p>Thanx to Grum on the <code>#git</code> IRC channel (on freenode), for
+pointing me in the right direction, and thanx
+to <a href="http://n2.nabble.com/Merging-repositories-and-their-histories-td731202.html">Merging
+repositories and their histories</a> for being the right direction into which I
+was pointed.</p>
+
+
+<hr /><p>By <span class=author><a href="mail:zrajm@klingonska.org">Zrajm C
+Akfohg</a></span> in Uppsala [2009-03-07]
+
+<small>(Validate: <a href="http://validator.w3.org/check?uri=referer">XHTML</a>,
+  <a href="http://jigsaw.w3.org/css-validator/check/referer">CSS</a>,
+  <a href="http://validator.w3.org/checklink?uri=http://zrajm.org/ref/ontoleptic.html">links</a>
+  License:
+  <a href="http://creativecommons.org/licenses/by-sa/3.0/" rel=license>CC BY&ndash;SA</a>)</small>
+</p>
+
+</body>
+</html>
